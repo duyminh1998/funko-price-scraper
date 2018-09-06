@@ -13,4 +13,5 @@ This Python script utilizes BeautifulSoup, Requests, and Pandas to search daily 
    
 # to-do
 create GUI for pop_price_scraper.py
+
 add support for more stores
