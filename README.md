@@ -2,9 +2,9 @@
 This Python script utilizes BeautifulSoup, Requests, and Pandas to search daily for FUNKO Pop! Products pricing discrepancies across multiple online retailers
 
 # prerequisites
-Python 3.7
-pip
-pip install -r requirements.txt
+1. Python 3.7
+2. pip
+3. pip install -r requirements.txt
 
 # usage
 1. download repo through github
