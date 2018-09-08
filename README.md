@@ -10,7 +10,7 @@ This Python script utilizes BeautifulSoup, Requests, and Pandas to search daily 
 # usage
 1. download repo through github
 2. run cmd and type `pip install -r requirements.txt`
-3. run pop_price_scraper.py daily to get the most recent prices
+3. run funko_price_scraper.py daily to get the most recent prices
    
 # to-do
 create GUI 
