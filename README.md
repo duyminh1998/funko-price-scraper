@@ -19,6 +19,8 @@ create GUI
 
 add support for more stores
 
+add support for selecting which stores to check pricing
+
 add support for accessing pricing from older dates
 
 add support for analysis of price trends in the form of graphs and charts
