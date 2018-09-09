@@ -12,35 +12,21 @@ class PriceSearcher():
         def __init__(self) -> None:
                 self.data = pd.DataFrame(columns=['NAME', 'STORE', 'ORIGINAL PRICE', 'SALE PRICE'])
 
-                self.hot_topic_url = []
-                for num in range(0, 500, 60):
-                        self.hot_topic_url.append("https://www.hottopic.com/funko/?sz=60&start=" + str(num))
-
-                self.box_lunch_url = []
-                for num in range(0, 540, 60):
-                        self.box_lunch_url.append("https://www.boxlunch.com/funko/?sz=60&start=" + str(num))
+                self.hot_topic_url = [("https://www.hottopic.com/funko/?sz=60&start=" + str(num)) for num in range(0, 500, 60)]
+                
+                self.box_lunch_url = [("https://www.boxlunch.com/funko/?sz=60&start=" + str(num)) for num in range(0, 540, 60)]
 
                 self.ht_bl_urls = [self.hot_topic_url, self.box_lunch_url]
 
-                self.chronotoys_url = []
-                for num in range(1, 7):
-                    self.chronotoys_url.append("https://www.chronotoys.com/collections/pop-exclusives?page=" + str(num) + "&sort_by=title-ascending")
+                self.chronotoys_url = [("https://www.chronotoys.com/collections/pop-exclusives?page=" + str(num) + "&sort_by=title-ascending") for num in range(1, 7)]
 
-                self.funko_url = []
-                for num in range(32):
-                    self.funko_url.append("https://shop.funko.com/catalog.html?p=" + str(num))
+                self.funko_url = [("https://shop.funko.com/catalog.html?p=" + str(num)) for num in range(32)]
 
-                self.fye_url = []
-                for num in range(0, 2160, 60):
-                    self.fye_url.append("https://www.fye.com/toys-collectibles/action-figures/funko/?sz=60&start=" + str(num))
+                self.fye_url = [("https://www.fye.com/toys-collectibles/action-figures/funko/?sz=60&start=" + str(num))  for num in range(0, 2160, 60)]
 
-                self.toytokyo_url = []
-                for num in range(8):
-                	self.toytokyo_url.append("https://www.toytokyo.com/funko-pop/?sort=alphaasc&page=" + str(num))
+                self.toytokyo_url = [("https://www.toytokyo.com/funko-pop/?sort=alphaasc&page=" + str(num)) for num in range(8)]
 
-                self.fugitive_url = []
-                for num in range(33):
-                    self.fugitive_url.append("https://www.fugitivetoys.com/collections/funko-pop?page=" + str(num) + "&sort_by=title-ascending")
+                self.fugitive_url = [("https://www.fugitivetoys.com/collections/funko-pop?page=" + str(num) + "&sort_by=title-ascending") for num in range(33)]
 
         # parses pricing data from the csv
         def search_4_price_csv(self, pop_name: str) -> "DataFrame":
@@ -106,11 +92,11 @@ class PriceSearcher():
                     for product in product_tile:
                         self.data.at[i, "NAME"] = product.findAll("a", {"class": "c-product-tile__product-name-link"})[0].text
                         self.data.at[i, "STORE"] = "FYE"
-                        price = product.findAll("div", {"class": "c-product-tile__price product-pricing"})[0].text
-                        if price[-15:-2] == "FYE Exclusive":
-                            self.data.at[i, "ORIGINAL PRICE"] = price[2:7].strip('\n')
-                        else:
-                            self.data.at[i, "ORIGINAL PRICE"] = price[2:].strip('\n')
+                        product_tile = soup.findAll("div", {"class": "c-product-tile product-tile product-image"})
+                        for product in product_tile:
+                        	price = product.findAll("div", {"class": "c-product-tile__price product-pricing"})[0].text
+                        	self.data.at[i, "SALE PRICE"] = price.split("\n")[1]
+                        	self.data.at[i, "ORIGINAL PRICE"] =  price.split("\n")[2]
                         i += 1
                 for url in self.toytokyo_url:
                 	soup = BeautifulSoup(requests.get(url).text, 'html.parser')
