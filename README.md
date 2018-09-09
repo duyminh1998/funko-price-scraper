@@ -3,7 +3,7 @@
 # funko-price-scraper
 This Python script utilizes BeautifulSoup, Requests, and Pandas to search daily for FUNKO Pop! Products pricing discrepancies across multiple online retailers. The script currently supports Hot Topic, Box Lunch, CHRONOTOYS, Funko, FYE, ToyTokyo and Fugitive Toys.
 
-NOTE: Updating for the most recent prices usually take 1~2 minute because the script has to scrape multiple retailers.
+NOTE: Updating for the most recent prices usually take 4~5 minute because the script has to scrape multiple retailers.
 
 # prerequisites
 1. Python 3.7
