@@ -11,7 +11,7 @@ NOTE: Updating for the most recent prices usually take 4~5 minute because the sc
 
 # usage
 1. download repo through github
-2. run cmd and type `pip install -r requirements.txt`
+2. `$ pip install -r requirements.txt`
 3. run funko_price_scraper.py daily to get the most recent prices
    
 # to-do
