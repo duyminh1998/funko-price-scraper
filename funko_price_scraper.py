@@ -9,7 +9,7 @@ from tabulate import tabulate
 
 
 class PriceSearcher():
-        def __init__(self) -> None:
+        def __init__(self) -> None: #initializes urls
                 self.data = pd.DataFrame(columns=['NAME', 'STORE', 'ORIGINAL PRICE', 'SALE PRICE'])
 
                 self.hot_topic_url = [("https://www.hottopic.com/funko/?sz=60&start=" + str(num)) for num in range(0, 500, 60)]
@@ -129,7 +129,9 @@ def main():
             if my_file.is_file():
                     print("\n" + "FUNKO Pop! Pricing Search")
                     print("--Please try fewer words if the search fails--\n")
-                    product_name = input("Please input product name to search: ")
+                    product_name = input("Please input product name to search or type quit to exit program: ")
+                    if product_name == 'quit':
+                        break
                     searcher.search_4_price_csv(pop_name=product_name)
             else:
                     print("Getting data...")
