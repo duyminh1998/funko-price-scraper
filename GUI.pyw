@@ -1,7 +1,7 @@
 from tkinter import *
 import pandas as pd
 import datetime
-'''This is a WIP fdevelopment of a GUI for the funko_price_scraper.py script'''
+'''This is a WIP development of a GUI for the funko_price_scraper.py script'''
 
 class PriceGenerator:
 
@@ -20,15 +20,19 @@ class PriceGenerator:
 
     def pop_search(self):
         now = datetime.datetime.now()
-        df = pd.read_csv("pop_prices_csv_" + str(now.month) + "_" + str(now.day) + ".csv", error_bad_lines=False)
-        pop_graph_df = pd.DataFrame(columns = ['NAME', 'STORE', 'ORIGINAL PRICE', 'SALE PRICE'])
-        pop_name = self.search.get().lower()
-        j = 0
-        for i in range(len(df)):
-            if pop_name in df.loc[i, "NAME"].lower():
-                pop_graph_df.loc[j] = df.loc[i]
-                j += 1
-        results = Label(text=pop_graph_df.drop_duplicates().to_string())
+        try:
+            df = pd.read_csv("pop_prices_csv_" + str(now.month) + "_" + str(now.day) + ".csv", error_bad_lines=False)
+            pop_graph_df = pd.DataFrame(columns = ['NAME', 'STORE', 'ORIGINAL PRICE', 'SALE PRICE'])
+            pop_name = self.search.get().lower()
+            j = 0
+            for i in range(len(df)):
+                if pop_name in df.loc[i, "NAME"].lower():
+                    pop_graph_df.loc[j] = df.loc[i]
+                    j += 1
+            end = pop_graph_df.drop_duplicates().to_string()
+        except OSError as e:
+            end = "No recent data found. Please run funko_price_scraper.py to generate new price data"
+        results = Label(text=end)
         results.pack()
 
 root = Tk()
