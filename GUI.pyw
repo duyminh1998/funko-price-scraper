@@ -1,7 +1,10 @@
 from tkinter import *
 import pandas as pd
 import datetime
-'''This is a WIP development of a GUI for the funko_price_scraper.py script'''
+'''This is a WIP development of a GUI for the funko_price_scraper.py script.
+   In order to use the GUI, the GUI.pyw must be in the same folder/directory as the most recent price csv.
+   It is the best practice to leave GUI.pyw and funko_price_scraper.py in the same folder because the latter
+   generates the csv that the former uses.'''
 
 class PriceGenerator:
 
