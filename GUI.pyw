@@ -8,18 +8,35 @@ import datetime
 
 class PriceGenerator:
 
-    def __init__(self, master):
+   def __init__(self, master):
         frame = Frame(master)
         frame.pack()
 
+        self.htVar = IntVar()
+        self.bxVar = IntVar()
+        self.cntVar = IntVar()
+        self.fVar = IntVar()
+        self.fyeVar = IntVar()
+        self.ttVar = IntVar()
+        self.fgtVar = IntVar()
+        
+
         self.search_label = Label(frame, text="Please enter product to search:")
-        self.search_label.pack(side=LEFT)
+        self.search_label.pack(side=TOP)
 
         self.search = Entry(frame)
-        self.search.pack(side=LEFT)
+        self.search.pack(side=TOP)
 
         self.search_enter = Button(frame, text="Search!", command=self.pop_search)
-        self.search_enter.pack(side=RIGHT)
+        self.search_enter.pack(side=TOP)
+
+        self.ht_option = Checkbutton(frame, state=ACTIVE, variable=self.htVar, text='Hot Topic').pack(side=BOTTOM)
+        self.bx_option = Checkbutton(frame, state=ACTIVE, variable=self.bxVar, text='Box Lunch').pack(side=BOTTOM)
+        self.cnt_option = Checkbutton(frame, state=ACTIVE, variable=self.cntVar, text='CHRONOTOYS').pack(side=BOTTOM)
+        self.f_option = Checkbutton(frame, state=ACTIVE, variable=self.fVar, text='Funko').pack(side=BOTTOM)
+        self.fye_option = Checkbutton(frame, state=ACTIVE, variable=self.fyeVar, text='FYE').pack(side=BOTTOM)
+        self.tt_option = Checkbutton(frame, state=ACTIVE, variable=self.ttVar, text='ToyTokyo').pack(side=BOTTOM)
+        self.fgt_option = Checkbutton(frame, state=ACTIVE, variable=self.fgtVar, text='Fugitive Toys').pack(side=BOTTOM)
 
     def pop_search(self):
         now = datetime.datetime.now()
