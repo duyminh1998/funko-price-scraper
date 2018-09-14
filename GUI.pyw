@@ -1,10 +1,8 @@
 from tkinter import *
 import pandas as pd
-import datetime
+import datetime, threading, requests, re
 from bs4 import BeautifulSoup
-import requests
 from pathlib import Path
-import re
 from tabulate import tabulate
 '''This is a WIP fdevelopment of a GUI for the funko_price_scraper.py script'''
 
@@ -32,7 +30,7 @@ class PriceGenerator:
         
         # GUI init
         frame = Frame(master)
-        frame.pack()
+        frame.pack(fill=BOTH)
 
         self.htVar = IntVar()
         self.bxVar = IntVar()
@@ -59,7 +57,7 @@ class PriceGenerator:
         self.tt_option = Checkbutton(frame, state=ACTIVE, variable=self.ttVar, text='ToyTokyo').pack(side=BOTTOM, fill=BOTH)
         self.fgt_option = Checkbutton(frame, state=ACTIVE, variable=self.fgtVar, text='Fugitive Toys').pack(side=BOTTOM, fill=BOTH)
 
-        self.generate_data = Button(frame, text="Generate data!", command=self.generate).pack(fill=BOTH)
+        self.generate_data = Button(frame, text="Generate data!", command=self.run).pack(fill=BOTH)
 
     def pop_search(self):
         now = datetime.datetime.now()
@@ -78,6 +76,11 @@ class PriceGenerator:
         except OSError as e:
             end = "No recent data found. Please generate new price data"
         results = Label(text=end).pack(fill=BOTH)
+
+    def run(self):
+        print("Getting data...")
+        t1 = threading.Thread(target=self.generate)
+        t1.start()
 
     def generate(self):
         now = datetime.datetime.now()
@@ -163,7 +166,8 @@ class PriceGenerator:
                     k += 4
                     i += 1
         self.data.drop_duplicates().to_csv("pop_prices_csv_" + str(now.month) + "_" + str(now.day) + ".csv")
-        done_generate_msg = Label(text="Finished getting data!").pack(fill=BOTH)
+        #done_generate_msg = Label(text="Finished getting data!").pack(fill=BOTH)
+        print("Done!")
 
 def main():
     root = Tk()
