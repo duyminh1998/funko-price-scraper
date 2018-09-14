@@ -78,7 +78,7 @@ class PriceGenerator:
         results = Label(text=end).pack(fill=BOTH)
 
     def run(self):
-        print("Getting data...")
+        getting_data = Label(text="Getting data...").pack(fill=BOTH)
         t1 = threading.Thread(target=self.generate)
         t1.start()
 
@@ -166,8 +166,7 @@ class PriceGenerator:
                     k += 4
                     i += 1
         self.data.drop_duplicates().to_csv("pop_prices_csv_" + str(now.month) + "_" + str(now.day) + ".csv")
-        #done_generate_msg = Label(text="Finished getting data!").pack(fill=BOTH)
-        print("Done!")
+        done_generate_msg = Label(text="Finished getting data!").pack(fill=BOTH)
 
 def main():
     root = Tk()
