@@ -152,11 +152,9 @@ class PriceGenerator:
                 for product in product_tile:
                     self.data.at[i, "NAME"] = product.findAll("a", {"class": "c-product-tile__product-name-link"})[0].text
                     self.data.at[i, "STORE"] = "FYE"
-                    product_tile = soup.findAll("div", {"class": "c-product-tile product-tile product-image"})
-                    for product in product_tile:
-                            price = product.findAll("div", {"class": "c-product-tile__price product-pricing"})[0].text
-                            self.data.at[i, "SALE PRICE"] = price.split("\n")[1]
-                            self.data.at[i, "ORIGINAL PRICE"] =  price.split("\n")[2]
+                    price = product.findAll("div", {"class": "c-product-tile__price product-pricing"})[0].text
+                    self.data.at[i, "SALE PRICE"] = price.split("\n")[1]
+                    self.data.at[i, "ORIGINAL PRICE"] =  price.split("\n")[2]
                     i += 1
         if self.ttVar.get() == 1 or self.allVar.get() == 1:
             for url in self.toytokyo_url:
