@@ -4,7 +4,7 @@ import datetime, threading, requests, re
 from bs4 import BeautifulSoup
 from pathlib import Path
 from tabulate import tabulate
-'''This is a WIP fdevelopment of a GUI for the funko_price_scraper.py script'''
+'''This is a WIP development of a GUI for the funko_price_scraper.py script'''
 
 class PriceGenerator:
 
@@ -39,16 +39,22 @@ class PriceGenerator:
         self.fyeVar = IntVar()
         self.ttVar = IntVar()
         self.fgtVar = IntVar()
+        self.allVar = IntVar()
         
         self.search_label = Label(frame, text="Please enter product to search:")
         self.search_label.pack(side=TOP, fill=BOTH)
 
         self.search = Entry(frame)
-        self.search.pack(side=TOP, fill=BOTH)
+        self.search.pack(side=TOP)
 
         self.search_enter = Button(frame, text="Search!", command=self.pop_search)
-        self.search_enter.pack(side=TOP, fill=BOTH)
-
+        self.search_enter.pack(side=TOP)
+        
+        self.status = StringVar()
+        self.status_label = Label(frame, textvariable=self.status, bd=1, relief=SUNKEN, anchor=W)
+        self.status_label.pack(side=BOTTOM, fill=X)
+        
+        self.all_option = Checkbutton(frame, state=ACTIVE, variable=self.allVar, text='All').pack(side=BOTTOM, fill=BOTH)
         self.ht_option = Checkbutton(frame, state=ACTIVE, variable=self.htVar, text='Hot Topic').pack(side=BOTTOM, fill=BOTH)
         self.bx_option = Checkbutton(frame, state=ACTIVE, variable=self.bxVar, text='Box Lunch').pack(side=BOTTOM, fill=BOTH)
         self.cnt_option = Checkbutton(frame, state=ACTIVE, variable=self.cntVar, text='CHRONOTOYS').pack(side=BOTTOM, fill=BOTH)
@@ -57,8 +63,15 @@ class PriceGenerator:
         self.tt_option = Checkbutton(frame, state=ACTIVE, variable=self.ttVar, text='ToyTokyo').pack(side=BOTTOM, fill=BOTH)
         self.fgt_option = Checkbutton(frame, state=ACTIVE, variable=self.fgtVar, text='Fugitive Toys').pack(side=BOTTOM, fill=BOTH)
 
-        self.generate_data = Button(frame, text="Generate data!", command=self.run).pack(fill=BOTH)
+        self.generate_data = Button(frame, text="Generate data!", command=self.run).pack()
 
+        self.example = StringVar()
+        self.examplelabel = Label(frame, textvariable=self.example)
+        self.examplelabel.pack()
+
+        #self.text = Text(frame)
+        #self.text.pack()
+        
     def pop_search(self):
         now = datetime.datetime.now()
         try:
@@ -72,20 +85,22 @@ class PriceGenerator:
                     if len(search & set(df.loc[i, "NAME"].lower().split(' '))) >= len(search):
                             self.results.loc[j] = df.loc[i]
                             j += 1
-            end = str(tabulate(self.results.fillna(value=0), headers=header, showindex=False, tablefmt='psql'))
+            end = str(tabulate(self.results.fillna(value=0), headers=header, showindex=False, tablefmt='pipe'))
         except OSError as e:
             end = "No recent data found. Please generate new price data"
-        results = Label(text=end).pack(fill=BOTH)
+        #self.text.delete(1.0, END)
+        #self.text.insert(END, end)
+        self.example.set(end)
 
     def run(self):
-        getting_data = Label(text="Getting data...").pack(fill=BOTH)
+        self.status.set("Getting data...")
         t1 = threading.Thread(target=self.generate)
         t1.start()
 
     def generate(self):
         now = datetime.datetime.now()
         i = 0
-        if self.htVar.get() == 1:
+        if self.htVar.get() == 1 or self.allVar.get() == 1:
             k = 0
             store = ["Hot Topic", "Box Lunch"]
             for url_set in self.ht_bl_urls:
@@ -110,7 +125,7 @@ class PriceGenerator:
                                     self.data.at[i, "STORE"] = store[k]
                                     i += 1
                     k += 1
-        if self.cntVar.get() == 1:
+        if self.cntVar.get() == 1 or self.allVar.get() == 1:
             for url in self.chronotoys_url:
                 soup = BeautifulSoup(requests.get(url).text, 'html.parser')
                 product_tile = soup.findAll("div", {"class": "grid__item wide--one-fifth large--one-quarter medium-down--one-half"})
@@ -121,7 +136,7 @@ class PriceGenerator:
                     self.data.at[i, "SALE PRICE"] = '.'.join(price[2:4])
                     self.data.at[i, "STORE"] = "CHRONOTOYS"
                     i += 1
-        if self.fVar.get() == 1:
+        if self.fVar.get() == 1 or self.allVar.get() == 1:
             for url in self.funko_url:
                 soup = BeautifulSoup(requests.get(url).text, 'html.parser')
                 product_tile = soup.findAll("div", {"class": "product-item-info"})
@@ -130,7 +145,7 @@ class PriceGenerator:
                     self.data.at[i, "ORIGINAL PRICE"] = product.div.div.findAll("span", {"class": "price"})[0].text[1:]
                     self.data.at[i, "STORE"] = "FUNKO"
                     i += 1
-        if self.fyeVar.get() == 1:
+        if self.fyeVar.get() == 1 or self.allVar.get() == 1:
             for url in self.fye_url:
                 soup = BeautifulSoup(requests.get(url).text, 'html.parser')
                 product_tile = soup.findAll("div", {"class": "c-product-tile product-tile product-image"})
@@ -143,7 +158,7 @@ class PriceGenerator:
                             self.data.at[i, "SALE PRICE"] = price.split("\n")[1]
                             self.data.at[i, "ORIGINAL PRICE"] =  price.split("\n")[2]
                     i += 1
-        if self.ttVar.get() == 1:
+        if self.ttVar.get() == 1 or self.allVar.get() == 1:
             for url in self.toytokyo_url:
                     soup = BeautifulSoup(requests.get(url).text, 'html.parser')
                     products = soup.findAll({"article": "product-item"})
@@ -152,7 +167,7 @@ class PriceGenerator:
                             self.data.at[i, "STORE"] = "ToyTokyo"
                             self.data.at[i, "ORIGINAL PRICE"] = list(product.findAll({"span": "price-value"}))[0].text.strip()[1:]
                             i += 1
-        if self.fgtVar.get() == 1:
+        if self.fgtVar.get() == 1 or self.allVar.get() == 1:
             for url in self.fugitive_url:
                 soup = BeautifulSoup(requests.get(url).text, 'html.parser')
                 products = soup.findAll({"span": "title"})
@@ -166,10 +181,11 @@ class PriceGenerator:
                     k += 4
                     i += 1
         self.data.drop_duplicates().to_csv("pop_prices_csv_" + str(now.month) + "_" + str(now.day) + ".csv")
-        done_generate_msg = Label(text="Finished getting data!").pack(fill=BOTH)
+        self.status.set("Done!")
 
 def main():
     root = Tk()
+    root.title("FUNKO Pop! Price Search")
     main = PriceGenerator(root)
     root.mainloop()
  
