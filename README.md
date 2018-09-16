@@ -13,14 +13,17 @@ NOTE: Updating for the most recent prices usually take 4~5 minute because the sc
 1. download repo through github
 2. `$ pip install -r requirements.txt`
 3. run funko_price_scraper.py daily to get the most recent prices
+4. (optional) run GUI.pyw as an alternative because it has a GUI and supports accessing price for specific stores rather than every store
    
 # to-do
-create GUI 
+~~create GUI ~~
 
 add support for more stores
 
-add support for selecting which stores to check pricing
+~~add support for selecting which stores to check pricing~~
 
 add support for accessing pricing from older dates
 
 add support for analysis of price trends in the form of graphs and charts
+
+improve GUI
