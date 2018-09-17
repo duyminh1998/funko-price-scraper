@@ -26,4 +26,4 @@ add support for accessing pricing from older dates
 
 add support for analysis of price trends in the form of graphs and charts
 
-improve GUI
+improve GUI (format results table)
