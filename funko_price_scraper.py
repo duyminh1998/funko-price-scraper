@@ -1,32 +1,24 @@
 import pandas as pd
 from bs4 import BeautifulSoup
-import requests
+import requests, re, datetime
 from pathlib import Path
-import re
-import datetime
 from tabulate import tabulate
 '''This script returns and generates pricing for FUNKO Pop! Products.'''
 
 
 class PriceSearcher():
-        def __init__(self) -> None: #initializes urls
+        def __init__(self) -> None:
                 self.data = pd.DataFrame(columns=['NAME', 'STORE', 'ORIGINAL PRICE', 'SALE PRICE'])
 
                 self.hot_topic_url = [("https://www.hottopic.com/funko/?sz=60&start=" + str(num)) for num in range(0, 500, 60)]
-                
                 self.box_lunch_url = [("https://www.boxlunch.com/funko/?sz=60&start=" + str(num)) for num in range(0, 540, 60)]
-
                 self.ht_bl_urls = [self.hot_topic_url, self.box_lunch_url]
-
                 self.chronotoys_url = [("https://www.chronotoys.com/collections/pop-exclusives?page=" + str(num) + "&sort_by=title-ascending") for num in range(1, 7)]
-
                 self.funko_url = [("https://shop.funko.com/catalog.html?p=" + str(num)) for num in range(32)]
-
                 self.fye_url = [("https://www.fye.com/toys-collectibles/action-figures/funko/?sz=60&start=" + str(num))  for num in range(0, 2160, 60)]
-
                 self.toytokyo_url = [("https://www.toytokyo.com/funko-pop/?sort=alphaasc&page=" + str(num)) for num in range(8)]
-
                 self.fugitive_url = [("https://www.fugitivetoys.com/collections/funko-pop?page=" + str(num) + "&sort_by=title-ascending") for num in range(33)]
+                self.seven_url = [("https://7bucksapop.com/collections/all-7-pops?page=" + str(num) + "&sort_by=title-ascending") for num in range(12)] 
 
         # parses pricing data from the csv
         def search_4_price_csv(self, pop_name: str) -> "DataFrame":
@@ -95,8 +87,8 @@ class PriceSearcher():
                         product_tile = soup.findAll("div", {"class": "c-product-tile product-tile product-image"})
                         for product in product_tile:
                         	price = product.findAll("div", {"class": "c-product-tile__price product-pricing"})[0].text
-                        	self.data.at[i, "SALE PRICE"] = price.split("\n")[1]
-                        	self.data.at[i, "ORIGINAL PRICE"] =  price.split("\n")[2]
+                        	self.data.at[i, "ORIGINAL PRICE"] = price.split("\n")[1]
+                        	self.data.at[i, "SALE PRICE"] =  price.split("\n")[2]
                         i += 1
                 for url in self.toytokyo_url:
                 	soup = BeautifulSoup(requests.get(url).text, 'html.parser')
@@ -118,6 +110,16 @@ class PriceSearcher():
                         n += 4
                         k += 4
                         i += 1
+                for url in self.seven_url:
+                    soup = BeautifulSoup(requests.get(url).text, 'html.parser')
+                    product_title = soup.findAll({'span': 'product-title'})
+                    j = 7
+                    for q in range(6, len(product_title)-5, 5):
+                        self.data.at[i, "STORE"] = "7 Bucks a Pop"
+                        self.data.at[i, "NAME"] = product_title[q].text.strip()
+                        self.data.at[i, "ORIGINAL PRICE"] = product_title[j].text.strip()
+                        j += 5
+                        i += 1
                 self.data.drop_duplicates().to_csv("pop_prices_csv_" + str(now.month) + "_" + str(now.day) + ".csv")
 
 def main():
@@ -129,9 +131,7 @@ def main():
             if my_file.is_file():
                     print("\n" + "FUNKO Pop! Pricing Search")
                     print("--Please try fewer words if the search fails--\n")
-                    product_name = input("Please input product name to search or type quit to exit program: ")
-                    if product_name == 'quit':
-                        break
+                    product_name = input("Please input product name to search: ")
                     searcher.search_4_price_csv(pop_name=product_name)
             else:
                     print("Getting data...")
