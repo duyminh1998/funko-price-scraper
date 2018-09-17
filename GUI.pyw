@@ -9,28 +9,22 @@ from tabulate import tabulate
 class PriceGenerator:
 
     def __init__(self, master):
-    	# URL and DataFrame init
+        # URL and DataFrame init
         self.data = pd.DataFrame(columns=['NAME', 'STORE', 'ORIGINAL PRICE', 'SALE PRICE'])
 
         self.hot_topic_url = [("https://www.hottopic.com/funko/?sz=60&start=" + str(num)) for num in range(0, 500, 60)]
-        
         self.box_lunch_url = [("https://www.boxlunch.com/funko/?sz=60&start=" + str(num)) for num in range(0, 540, 60)]
-
         self.ht_bl_urls = [self.hot_topic_url, self.box_lunch_url]
-
         self.chronotoys_url = [("https://www.chronotoys.com/collections/pop-exclusives?page=" + str(num) + "&sort_by=title-ascending") for num in range(1, 7)]
-
         self.funko_url = [("https://shop.funko.com/catalog.html?p=" + str(num)) for num in range(32)]
-
         self.fye_url = [("https://www.fye.com/toys-collectibles/action-figures/funko/?sz=60&start=" + str(num))  for num in range(0, 2160, 60)]
-
         self.toytokyo_url = [("https://www.toytokyo.com/funko-pop/?sort=alphaasc&page=" + str(num)) for num in range(8)]
-
         self.fugitive_url = [("https://www.fugitivetoys.com/collections/funko-pop?page=" + str(num) + "&sort_by=title-ascending") for num in range(33)]
+        self.seven_url = [("https://7bucksapop.com/collections/all-7-pops?page=" + str(num) + "&sort_by=title-ascending") for num in range(12)] 
         
         # GUI init
         frame = Frame(master)
-        frame.pack(fill=BOTH)
+        frame.grid(row=0, column=0)
 
         self.htVar = IntVar()
         self.bxVar = IntVar()
@@ -39,36 +33,37 @@ class PriceGenerator:
         self.fyeVar = IntVar()
         self.ttVar = IntVar()
         self.fgtVar = IntVar()
+        self.sevenVar = IntVar()
         self.allVar = IntVar()
         
         self.search_label = Label(frame, text="Please enter product to search:")
-        self.search_label.pack(side=TOP, fill=BOTH)
+        self.search_label.grid(row=0, columnspan = 2, sticky=W)
 
         self.search = Entry(frame)
-        self.search.pack(side=TOP)
+        self.search.grid(row=0, column=2)
 
         self.search_enter = Button(frame, text="Search!", command=self.pop_search)
-        self.search_enter.pack(side=TOP)
+        self.search_enter.grid(row=0, column=3, sticky=W)
         
         self.status = StringVar()
         self.status_label = Label(frame, textvariable=self.status, bd=1, relief=SUNKEN, anchor=W)
-        self.status_label.pack(side=BOTTOM, fill=X)
+        self.status_label.grid(row=2, column=0, columnspan=9, sticky=S+E+W)
         
-        self.all_option = Checkbutton(frame, state=ACTIVE, variable=self.allVar, text='All').pack(side=BOTTOM, fill=BOTH)
-        self.ht_option = Checkbutton(frame, state=ACTIVE, variable=self.htVar, text='Hot Topic').pack(side=BOTTOM, fill=BOTH)
-        self.bx_option = Checkbutton(frame, state=ACTIVE, variable=self.bxVar, text='Box Lunch').pack(side=BOTTOM, fill=BOTH)
-        self.cnt_option = Checkbutton(frame, state=ACTIVE, variable=self.cntVar, text='CHRONOTOYS').pack(side=BOTTOM, fill=BOTH)
-        self.f_option = Checkbutton(frame, state=ACTIVE, variable=self.fVar, text='Funko').pack(side=BOTTOM, fill=BOTH)
-        self.fye_option = Checkbutton(frame, state=ACTIVE, variable=self.fyeVar, text='FYE').pack(side=BOTTOM, fill=BOTH)
-        self.tt_option = Checkbutton(frame, state=ACTIVE, variable=self.ttVar, text='ToyTokyo').pack(side=BOTTOM, fill=BOTH)
-        self.fgt_option = Checkbutton(frame, state=ACTIVE, variable=self.fgtVar, text='Fugitive Toys').pack(side=BOTTOM, fill=BOTH)
+        self.generate_data = Button(frame, text="Generate data!", command=self.run).grid(row=1, column=9, sticky=W)
 
-        self.generate_data = Button(frame, text="Generate data!", command=self.run).pack()
+        self.all_option = Checkbutton(frame, state=ACTIVE, variable=self.allVar, text='All').grid(row=1, column=8, sticky=W)
+        self.ht_option = Checkbutton(frame, state=ACTIVE, variable=self.htVar, text='Hot Topic').grid(row=1, column=2, sticky="nsew")
+        self.bx_option = Checkbutton(frame, state=ACTIVE, variable=self.bxVar, text='Box Lunch').grid(row=1, column=3, sticky="nsew")
+        self.cnt_option = Checkbutton(frame, state=ACTIVE, variable=self.cntVar, text='CHRONOTOYS').grid(row=1, column=4, sticky="nsew")
+        self.f_option = Checkbutton(frame, state=ACTIVE, variable=self.fVar, text='Funko').grid(row=1, column=5, sticky="nsew")
+        self.fye_option = Checkbutton(frame, state=ACTIVE, variable=self.fyeVar, text='FYE').grid(row=1, column=6, sticky="nsew")
+        self.tt_option = Checkbutton(frame, state=ACTIVE, variable=self.ttVar, text='ToyTokyo').grid(row=1, column=1, sticky="nsew")
+        self.fgt_option = Checkbutton(frame, state=ACTIVE, variable=self.fgtVar, text='Fugitive Toys').grid(row=1, column=0, sticky="nsew")
+        self.seven_option = Checkbutton(frame, state=ACTIVE, variable=self.sevenVar, text='7 Bucks a Pop').grid(row=1, column=7, sticky="nsew")
 
         self.example = StringVar()
         self.examplelabel = Label(frame, textvariable=self.example)
-        self.examplelabel.pack()
-
+        self.examplelabel.grid(row=3, columnspan=10)
         #self.text = Text(frame)
         #self.text.pack()
         
@@ -177,6 +172,17 @@ class PriceGenerator:
                     self.data.at[i, "ORIGINAL PRICE"] = products[k].text.strip()
                     n += 4
                     k += 4
+                    i += 1
+        if self.sevenVar.get() == 1 or self.allVar.get() == 1:
+            for url in self.seven_url:
+                soup = BeautifulSoup(requests.get(url).text, 'html.parser')
+                product_title = soup.findAll({'span': 'product-title'})
+                j = 7
+                for q in range(6, len(product_title)-5, 5):
+                    self.data.at[i, "STORE"] = "7 Bucks a Pop"
+                    self.data.at[i, "NAME"] = product_title[q].text.strip()
+                    self.data.at[i, "ORIGINAL PRICE"] = product_title[j].text.strip()
+                    j += 5
                     i += 1
         self.data.drop_duplicates().to_csv("pop_prices_csv_" + str(now.month) + "_" + str(now.day) + ".csv")
         self.status.set("Done!")
