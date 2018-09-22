@@ -20,7 +20,9 @@ NOTE: Updating for the most recent prices usually take 4~5 minute because the sc
 8. Search for any Pop on the search bar.
 
 # usage
-The first thing that users should do when running the program is press "Generate data!" in order to get the most recent prices. Please check the store boxes to select which stores you want to get prices from. You will not have to generate the price again until the next day. For example, if you generated data on 09/22/2018, you can continue to search for prices until 09/23/2018, when the program will ask you to generate new pricing data. 
+The first thing that you should do when running the program is press "Generate data!" to get the most recent prices. Please check the store boxes to select the stores you want to get prices from. After the program finishes getting the data, you can enter the name of the Funko Pop! in the search bar and click "Search!" to search for its price. 
+
+You will not have to generate the price again until the next day. For example, if you generated data on 09/22/2018, you can continue to search for prices until 09/23/2018, when the program will ask you to generate new pricing data. 
    
 # to-do
 ~create GUI~
