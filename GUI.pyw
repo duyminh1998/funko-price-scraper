@@ -85,11 +85,12 @@ class PriceGenerator:
                             self.results.loc[j] = df.loc[i]
                             j += 1
             end = str(tabulate(self.results.fillna(value=0), headers=header, showindex=False, tablefmt='pipe'))
+            self.example.set(end)
         except:
-            end = "No recent data found. Please generate new price data"
+            self.status.set("No recent data found. Please generate new price data")
         # self.text.delete(1.0, END)
         # self.text.insert(END, end)
-        self.example.set(end)
+        
 
     def run(self):
         self.status.set("Getting data...")
@@ -100,6 +101,7 @@ class PriceGenerator:
         now = datetime.datetime.now()
         i = 0
         error = ''
+        found = []
         if self.htVar.get() == 1 or self.bxVar.get() == 1 or self.allVar.get() == 1:
             try:
                 k = 0
@@ -126,6 +128,7 @@ class PriceGenerator:
                                         self.data.at[i, "STORE"] = store[k]
                                         i += 1
                         k += 1
+                found.append("Hot Topic/ Box Lunch")
             except:
                 error = "Can't connect to Hot Topic/Box Lunch"
         if self.cntVar.get() == 1 or self.allVar.get() == 1:
@@ -140,6 +143,7 @@ class PriceGenerator:
                         self.data.at[i, "SALE PRICE"] = '.'.join(price[2:4])
                         self.data.at[i, "STORE"] = "CHRONOTOYS"
                         i += 1
+                found.append("CHRONOTOYS")
             except:
                 error = "Can't connect to CHRONOTOYS"
         if self.fVar.get() == 1 or self.allVar.get() == 1:
@@ -152,6 +156,7 @@ class PriceGenerator:
                         self.data.at[i, "ORIGINAL PRICE"] = product.div.div.findAll("span", {"class": "price"})[0].text[1:]
                         self.data.at[i, "STORE"] = "FUNKO"
                         i += 1
+                found.append("Funko")
             except:
                 error = "Can't connect to Funko"
         if self.fyeVar.get() == 1 or self.allVar.get() == 1:
@@ -166,6 +171,7 @@ class PriceGenerator:
                         self.data.at[i, "SALE PRICE"] = price.split("\n")[1]
                         self.data.at[i, "ORIGINAL PRICE"] =  price.split("\n")[2]
                         i += 1
+                found.append("FYE")
             except:
                 error = "Can't connect to FYE"
         if self.ttVar.get() == 1 or self.allVar.get() == 1:
@@ -178,6 +184,7 @@ class PriceGenerator:
                                 self.data.at[i, "STORE"] = "ToyTokyo"
                                 self.data.at[i, "ORIGINAL PRICE"] = list(product.findAll({"span": "price-value"}))[0].text.strip()[1:]
                                 i += 1
+                found.append("ToyTokyo")
             except:
                 error = "Can't connect to ToyTokyo"
         if self.fgtVar.get() == 1 or self.allVar.get() == 1:
@@ -194,6 +201,7 @@ class PriceGenerator:
                         n += 4
                         k += 4
                         i += 1
+                found.append("Fugitive Toys")
             except:
                 error = "Can't connect to Fugitive Toys"
         if self.sevenVar.get() == 1 or self.allVar.get() == 1:
@@ -208,12 +216,13 @@ class PriceGenerator:
                         self.data.at[i, "ORIGINAL PRICE"] = product_title[j].text.strip()
                         j += 5
                         i += 1
+                found.append("7 Bucks a Pop")
             except:
                 error = "Can't connect to 7 Bucks a Pop"
         self.data.drop_duplicates().to_csv("pop_prices_csv_" + str(now.month) + "_" + str(now.day) + ".csv")
-        self.status.set("Done!")
+        self.status.set("Done! Found data for " + str(found))
         if error != '':
-            self.example.set(error)
+            self.status.set(error + " | Found data for " + str(found))
 
 
 def main():
