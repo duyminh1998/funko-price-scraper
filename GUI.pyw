@@ -1,6 +1,9 @@
 from tkinter import *
 import pandas as pd
-import datetime, threading, requests, re
+import datetime
+import threading
+import requests
+import re
 from bs4 import BeautifulSoup
 from pathlib import Path
 from tabulate import tabulate
@@ -48,7 +51,7 @@ class PriceGenerator:
         
         self.status = StringVar()
         self.status_label = Label(frame, textvariable=self.status, bd=1, relief=SUNKEN, anchor=W)
-        self.status_label.grid(row=2, column=0, columnspan=9, sticky=S+E+W)
+        self.status_label.grid(row=3, column=0, columnspan=9, sticky=S+E+W)
         
         self.generate_data = Button(frame, text="Generate data!", command=self.run).grid(row=1, column=9, sticky=W)
 
@@ -64,7 +67,7 @@ class PriceGenerator:
 
         self.example = StringVar()
         self.examplelabel = Label(frame, textvariable=self.example)
-        self.examplelabel.grid(row=3, columnspan=10)
+        self.examplelabel.grid(row=2, columnspan=10)
         # self.text = Text(frame)
         # self.text.pack()
         
@@ -96,7 +99,8 @@ class PriceGenerator:
     def generate(self):
         now = datetime.datetime.now()
         i = 0
-        if self.htVar.get() == 1 or self.allVar.get() == 1:
+        error = ''
+        if self.htVar.get() == 1 or self.bxVar.get() == 1 or self.allVar.get() == 1:
             try:
                 k = 0
                 store = ["Hot Topic", "Box Lunch"]
@@ -122,8 +126,8 @@ class PriceGenerator:
                                         self.data.at[i, "STORE"] = store[k]
                                         i += 1
                         k += 1
-            except OSError as e:
-                print(e)
+            except:
+                error = "Can't connect to Hot Topic/Box Lunch"
         if self.cntVar.get() == 1 or self.allVar.get() == 1:
             try:
                 for url in self.chronotoys_url:
@@ -136,8 +140,8 @@ class PriceGenerator:
                         self.data.at[i, "SALE PRICE"] = '.'.join(price[2:4])
                         self.data.at[i, "STORE"] = "CHRONOTOYS"
                         i += 1
-            except OSError as e:
-                print(e)
+            except:
+                error = "Can't connect to CHRONOTOYS"
         if self.fVar.get() == 1 or self.allVar.get() == 1:
             try:
                 for url in self.funko_url:
@@ -148,8 +152,8 @@ class PriceGenerator:
                         self.data.at[i, "ORIGINAL PRICE"] = product.div.div.findAll("span", {"class": "price"})[0].text[1:]
                         self.data.at[i, "STORE"] = "FUNKO"
                         i += 1
-            except OSError as e:
-                print(e)
+            except:
+                error = "Can't connect to Funko"
         if self.fyeVar.get() == 1 or self.allVar.get() == 1:
             try:
                 for url in self.fye_url:
@@ -162,8 +166,8 @@ class PriceGenerator:
                         self.data.at[i, "SALE PRICE"] = price.split("\n")[1]
                         self.data.at[i, "ORIGINAL PRICE"] =  price.split("\n")[2]
                         i += 1
-            except OSError as e:
-                print(e)
+            except:
+                error = "Can't connect to FYE"
         if self.ttVar.get() == 1 or self.allVar.get() == 1:
             try:
                 for url in self.toytokyo_url:
@@ -174,8 +178,8 @@ class PriceGenerator:
                                 self.data.at[i, "STORE"] = "ToyTokyo"
                                 self.data.at[i, "ORIGINAL PRICE"] = list(product.findAll({"span": "price-value"}))[0].text.strip()[1:]
                                 i += 1
-            except OSError as e:
-                print(e)
+            except:
+                error = "Can't connect to ToyTokyo"
         if self.fgtVar.get() == 1 or self.allVar.get() == 1:
             try:
                 for url in self.fugitive_url:
@@ -190,8 +194,8 @@ class PriceGenerator:
                         n += 4
                         k += 4
                         i += 1
-            except OSError as e:
-                print(e)
+            except:
+                error = "Can't connect to Fugitive Toys"
         if self.sevenVar.get() == 1 or self.allVar.get() == 1:
             try:
                 for url in self.seven_url:
@@ -204,10 +208,12 @@ class PriceGenerator:
                         self.data.at[i, "ORIGINAL PRICE"] = product_title[j].text.strip()
                         j += 5
                         i += 1
-            except OSError as e:
-                print(e)
+            except:
+                error = "Can't connect to 7 Bucks a Pop"
         self.data.drop_duplicates().to_csv("pop_prices_csv_" + str(now.month) + "_" + str(now.day) + ".csv")
         self.status.set("Done!")
+        if error != '':
+            self.example.set(error)
 
 
 def main():
