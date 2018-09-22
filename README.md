@@ -20,10 +20,7 @@ NOTE: Updating for the most recent prices usually take 4~5 minute because the sc
 8. Search for any Pop on the search bar.
 
 # usage
-1. download or clone repo through github
-2. `$ pip install -r requirements.txt`
-3. run funko_price_scraper.py daily to get the most recent prices
-4. (optional) run GUI.pyw as an alternative because it has a GUI that supports accessing price for specific stores rather than every store
+The first thing that users should do when running the program is press "Generate data!" in order to get the most recent prices. Please check the store boxes to select which stores you want to get prices from. You will not have to generate the price again until the next day. For example, if you generated data on 09/22/2018, you can continue to search for prices until 09/23/2018, when the program will ask you to generate new pricing data. 
    
 # to-do
 ~create GUI~
