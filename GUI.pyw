@@ -82,7 +82,7 @@ class PriceGenerator:
                             self.results.loc[j] = df.loc[i]
                             j += 1
             end = str(tabulate(self.results.fillna(value=0), headers=header, showindex=False, tablefmt='pipe'))
-        except OSError as e:
+        except:
             end = "No recent data found. Please generate new price data"
         # self.text.delete(1.0, END)
         # self.text.insert(END, end)
@@ -122,8 +122,8 @@ class PriceGenerator:
                                         self.data.at[i, "STORE"] = store[k]
                                         i += 1
                         k += 1
-            except:
-                print("Hot Topic and/or Box Lunch not reachable")
+            except OSError as e:
+                print(e)
         if self.cntVar.get() == 1 or self.allVar.get() == 1:
             try:
                 for url in self.chronotoys_url:
@@ -136,8 +136,8 @@ class PriceGenerator:
                         self.data.at[i, "SALE PRICE"] = '.'.join(price[2:4])
                         self.data.at[i, "STORE"] = "CHRONOTOYS"
                         i += 1
-            except:
-                print("CHRONOTOYS not reachable")
+            except OSError as e:
+                print(e)
         if self.fVar.get() == 1 or self.allVar.get() == 1:
             try:
                 for url in self.funko_url:
@@ -148,8 +148,8 @@ class PriceGenerator:
                         self.data.at[i, "ORIGINAL PRICE"] = product.div.div.findAll("span", {"class": "price"})[0].text[1:]
                         self.data.at[i, "STORE"] = "FUNKO"
                         i += 1
-            except:
-                print("Funko not reachable")
+            except OSError as e:
+                print(e)
         if self.fyeVar.get() == 1 or self.allVar.get() == 1:
             try:
                 for url in self.fye_url:
@@ -162,8 +162,8 @@ class PriceGenerator:
                         self.data.at[i, "SALE PRICE"] = price.split("\n")[1]
                         self.data.at[i, "ORIGINAL PRICE"] =  price.split("\n")[2]
                         i += 1
-            except:
-                print("FYE not reachable")
+            except OSError as e:
+                print(e)
         if self.ttVar.get() == 1 or self.allVar.get() == 1:
             try:
                 for url in self.toytokyo_url:
@@ -174,8 +174,8 @@ class PriceGenerator:
                                 self.data.at[i, "STORE"] = "ToyTokyo"
                                 self.data.at[i, "ORIGINAL PRICE"] = list(product.findAll({"span": "price-value"}))[0].text.strip()[1:]
                                 i += 1
-            except:
-                print("ToyTokyo not reachable")
+            except OSError as e:
+                print(e)
         if self.fgtVar.get() == 1 or self.allVar.get() == 1:
             try:
                 for url in self.fugitive_url:
@@ -190,8 +190,8 @@ class PriceGenerator:
                         n += 4
                         k += 4
                         i += 1
-            except:
-                print("Fugitive Toys not reachable")
+            except OSError as e:
+                print(e)
         if self.sevenVar.get() == 1 or self.allVar.get() == 1:
             try:
                 for url in self.seven_url:
@@ -204,8 +204,8 @@ class PriceGenerator:
                         self.data.at[i, "ORIGINAL PRICE"] = product_title[j].text.strip()
                         j += 5
                         i += 1
-            except:
-                print("7 Bucks a Pop not reachable")
+            except OSError as e:
+                print(e)
         self.data.drop_duplicates().to_csv("pop_prices_csv_" + str(now.month) + "_" + str(now.day) + ".csv")
         self.status.set("Done!")
 
