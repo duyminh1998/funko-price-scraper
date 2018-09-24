@@ -19,6 +19,7 @@ NOTE: Updating for the most recent prices usually take 4~5 minute because the sc
 7. Wait for the status bar to go from "Getting data..." to "Done!".
 8. Search for any Funko Pop! product on the search bar.
 
+
 # usage
 The first thing that you should do when you run the program is press "Generate data!" to get the most recent prices. Please check the store boxes to select the stores you want to get prices from. After the program finishes getting the data, you can enter the name of the Funko Pop! in the search bar and click "Search!" to search for its price. 
 
