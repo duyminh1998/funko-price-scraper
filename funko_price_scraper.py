@@ -10,15 +10,23 @@ from tabulate import tabulate
 '''This is a WIP development of a GUI for the funko_price_scraper.py script'''
 
 
-class Interface:
+class PriceGenerator:
 
     def __init__(self, master):
-        # init DataFrame that records prices
-        self.data = pd.DataFrame(columns=['NAME', 'STORE', 'ORIGINAL PRICE', 'SALE PRICE'])
+        # URL init
+        self.hot_topic_url = [("https://www.hottopic.com/funko/?sz=60&start=" + str(num)) for num in range(0, 500, 60)]
+        self.box_lunch_url = [("https://www.boxlunch.com/funko/?sz=60&start=" + str(num)) for num in range(0, 540, 60)]
+        self.ht_bl_urls = [self.hot_topic_url, self.box_lunch_url]
+        self.chronotoys_url = [("https://www.chronotoys.com/collections/pop-exclusives?page=" + str(num) + "&sort_by=title-ascending") for num in range(1, 7)]
+        self.funko_url = [("https://shop.funko.com/catalog.html?p=" + str(num)) for num in range(32)]
+        self.fye_url = [("https://www.fye.com/toys-collectibles/action-figures/funko/?sz=60&start=" + str(num))  for num in range(0, 2160, 60)]
+        self.toytokyo_url = [("https://www.toytokyo.com/funko-pop/?sort=alphaasc&page=" + str(num)) for num in range(8)]
+        self.fugitive_url = [("https://www.fugitivetoys.com/collections/funko-pop?page=" + str(num) + "&sort_by=title-ascending") for num in range(33)]
+        self.seven_url = [("https://7bucksapop.com/collections/all-7-pops?page=" + str(num) + "&sort_by=title-ascending") for num in range(12)] 
         
-        # init interface frame and variables
-        self.frame = Frame(master)
-        self.frame.grid(row=0, column=0)
+        # GUI init
+        frame = Frame(master)
+        frame.grid(row=0, column=0)
 
         self.htVar = IntVar()
         self.bxVar = IntVar()
@@ -29,41 +37,37 @@ class Interface:
         self.fgtVar = IntVar()
         self.sevenVar = IntVar()
         self.allVar = IntVar()
-
-    # builds and populates the interface with buttons and labels
-    def build_interface(self):
         
-        self.search_label = Label(self.frame, text="Please enter product to search:")
+        self.search_label = Label(frame, text="Please enter product to search:")
         self.search_label.grid(row=0, columnspan = 2, sticky=W)
 
-        self.search = Entry(self.frame)
+        self.search = Entry(frame)
         self.search.grid(row=0, column=2)
 
-        self.search_enter = Button(self.frame, text="Search!", command=self.pop_search)
+        self.search_enter = Button(frame, text="Search!", command=self.pop_search)
         self.search_enter.grid(row=0, column=3, sticky=W)
         
         self.status = StringVar()
-        self.status_label = Label(self.frame, textvariable=self.status, bd=1, relief=SUNKEN, anchor=W)
+        self.status_label = Label(frame, textvariable=self.status, bd=1, relief=SUNKEN, anchor=W)
         self.status_label.grid(row=3, column=0, columnspan=9, sticky=S+E+W)
         
-        self.generate_data = Button(self.frame, text="Generate data!", command=self.run).grid(row=1, column=9, sticky=W)
+        self.generate_data = Button(frame, text="Generate data!", command=self.run).grid(row=1, column=9, sticky=W)
 
-        self.all_option = Checkbutton(self.frame, state=ACTIVE, variable=self.allVar, text='All').grid(row=1, column=8, sticky=W)
-        self.ht_option = Checkbutton(self.frame, state=ACTIVE, variable=self.htVar, text='Hot Topic').grid(row=1, column=2, sticky="nsew")
-        self.bx_option = Checkbutton(self.frame, state=ACTIVE, variable=self.bxVar, text='Box Lunch').grid(row=1, column=3, sticky="nsew")
-        self.cnt_option = Checkbutton(self.frame, state=ACTIVE, variable=self.cntVar, text='CHRONOTOYS').grid(row=1, column=4, sticky="nsew")
-        self.f_option = Checkbutton(self.frame, state=ACTIVE, variable=self.fVar, text='Funko').grid(row=1, column=5, sticky="nsew")
-        self.fye_option = Checkbutton(self.frame, state=ACTIVE, variable=self.fyeVar, text='FYE').grid(row=1, column=6, sticky="nsew")
-        self.tt_option = Checkbutton(self.frame, state=ACTIVE, variable=self.ttVar, text='ToyTokyo').grid(row=1, column=1, sticky="nsew")
-        self.fgt_option = Checkbutton(self.frame, state=ACTIVE, variable=self.fgtVar, text='Fugitive Toys').grid(row=1, column=0, sticky="nsew")
-        self.seven_option = Checkbutton(self.frame, state=ACTIVE, variable=self.sevenVar, text='7 Bucks a Pop').grid(row=1, column=7, sticky="nsew")
+        self.all_option = Checkbutton(frame, state=ACTIVE, variable=self.allVar, text='All').grid(row=1, column=8, sticky=W)
+        self.ht_option = Checkbutton(frame, state=ACTIVE, variable=self.htVar, text='Hot Topic').grid(row=1, column=2, sticky="nsew")
+        self.bx_option = Checkbutton(frame, state=ACTIVE, variable=self.bxVar, text='Box Lunch').grid(row=1, column=3, sticky="nsew")
+        self.cnt_option = Checkbutton(frame, state=ACTIVE, variable=self.cntVar, text='CHRONOTOYS').grid(row=1, column=4, sticky="nsew")
+        self.f_option = Checkbutton(frame, state=ACTIVE, variable=self.fVar, text='Funko').grid(row=1, column=5, sticky="nsew")
+        self.fye_option = Checkbutton(frame, state=ACTIVE, variable=self.fyeVar, text='FYE').grid(row=1, column=6, sticky="nsew")
+        self.tt_option = Checkbutton(frame, state=ACTIVE, variable=self.ttVar, text='ToyTokyo').grid(row=1, column=1, sticky="nsew")
+        self.fgt_option = Checkbutton(frame, state=ACTIVE, variable=self.fgtVar, text='Fugitive Toys').grid(row=1, column=0, sticky="nsew")
+        self.seven_option = Checkbutton(frame, state=ACTIVE, variable=self.sevenVar, text='7 Bucks a Pop').grid(row=1, column=7, sticky="nsew")
 
-        self.example = StringVar()
-        self.examplelabel = Label(self.frame, textvariable=self.example)
+        self.search_result = StringVar()
+        self.examplelabel = Label(frame, textvariable=self.search_result)
         self.examplelabel.grid(row=2, columnspan=10)
-    
-    # this function allows the user to search for a product's price stored in a .csv
-    def pop_search(self):
+        
+    def pop_search(self) -> None:
         now = datetime.datetime.now()
         try:
             pop_name = self.search.get()
@@ -77,17 +81,17 @@ class Interface:
                             self.results.loc[j] = df.loc[i]
                             j += 1
             end = str(tabulate(self.results.fillna(value=0), headers=header, showindex=False, tablefmt='pipe'))
-            self.example.set(end)
+            self.search_result.set(end)
         except:
             self.status.set("No recent data found. Please generate new price data")
 
-    def run(self):
+    def run(self) -> None:
         self.status.set("Getting data...")
         t1 = threading.Thread(target=self.generate)
         t1.start()
 
-    # this function scrapes the web for prices and stores the information into a .csv
-    def generate(self):
+    def generate(self) -> 'DataFrame':
+        self.data = pd.DataFrame(columns=['NAME', 'STORE', 'ORIGINAL PRICE', 'SALE PRICE'])
         now = datetime.datetime.now()
         i = 0
         error = ''
@@ -96,7 +100,7 @@ class Interface:
             try:
                 k = 0
                 store = ["Hot Topic", "Box Lunch"]
-                for url_set in ht_bl_urls:
+                for url_set in self.ht_bl_urls:
                         for url in url_set:
                                 headers = {"User-Agent": "Chrome/5.0"}
                                 soup = BeautifulSoup(requests.get(url, headers=headers).text, 'html5lib')
@@ -123,7 +127,7 @@ class Interface:
                 error = "Can't connect to Hot Topic/Box Lunch"
         if self.cntVar.get() == 1 or self.allVar.get() == 1:
             try:
-                for url in chronotoys_url:
+                for url in self.chronotoys_url:
                     soup = BeautifulSoup(requests.get(url).text, 'html.parser')
                     product_tile = soup.findAll("div", {"class": "grid__item wide--one-fifth large--one-quarter medium-down--one-half"})
                     for product in product_tile:
@@ -138,7 +142,7 @@ class Interface:
                 error = "Can't connect to CHRONOTOYS"
         if self.fVar.get() == 1 or self.allVar.get() == 1:
             try:
-                for url in funko_url:
+                for url in self.funko_url:
                     soup = BeautifulSoup(requests.get(url).text, 'html.parser')
                     product_tile = soup.findAll("div", {"class": "product-item-info"})
                     for product in product_tile:
@@ -151,7 +155,7 @@ class Interface:
                 error = "Can't connect to Funko"
         if self.fyeVar.get() == 1 or self.allVar.get() == 1:
             try:
-                for url in fye_url:
+                for url in self.fye_url:
                     soup = BeautifulSoup(requests.get(url).text, 'html.parser')
                     product_tile = soup.findAll("div", {"class": "c-product-tile product-tile product-image"})
                     for product in product_tile:
@@ -166,7 +170,7 @@ class Interface:
                 error = "Can't connect to FYE"
         if self.ttVar.get() == 1 or self.allVar.get() == 1:
             try:
-                for url in toytokyo_url:
+                for url in self.toytokyo_url:
                         soup = BeautifulSoup(requests.get(url).text, 'html.parser')
                         products = soup.findAll({"article": "product-item"})
                         for product in products:
@@ -179,7 +183,7 @@ class Interface:
                 error = "Can't connect to ToyTokyo"
         if self.fgtVar.get() == 1 or self.allVar.get() == 1:
             try:
-                for url in fugitive_url:
+                for url in self.fugitive_url:
                     soup = BeautifulSoup(requests.get(url).text, 'html.parser')
                     products = soup.findAll({"span": "title"})
                     n = 10
@@ -196,7 +200,7 @@ class Interface:
                 error = "Can't connect to Fugitive Toys"
         if self.sevenVar.get() == 1 or self.allVar.get() == 1:
             try:
-                for url in seven_url:
+                for url in self.seven_url:
                     soup = BeautifulSoup(requests.get(url).text, 'html.parser')
                     product_title = soup.findAll({'span': 'product-title'})
                     j = 7
@@ -209,28 +213,16 @@ class Interface:
                 found.append("7 Bucks a Pop")
             except:
                 error = "Can't connect to 7 Bucks a Pop"
-        self.data.drop_duplicates().to_csv("pop_prices_csv_" + str(now.month) + "_" + str(now.day) + ".csv")
         self.status.set("Done! Found data for " + str(found))
         if error != '':
             self.status.set(error + " | Found data for " + str(found))
+        return self.data.drop_duplicates().to_csv("pop_prices_csv_" + str(now.month) + "_" + str(now.day) + ".csv")
 
-# urls
-
-hot_topic_url = [("https://www.hottopic.com/funko/?sz=60&start=" + str(num)) for num in range(0, 500, 60)]
-box_lunch_url = [("https://www.boxlunch.com/funko/?sz=60&start=" + str(num)) for num in range(0, 540, 60)]
-ht_bl_urls = [hot_topic_url, box_lunch_url]
-chronotoys_url = [("https://www.chronotoys.com/collections/pop-exclusives?page=" + str(num) + "&sort_by=title-ascending") for num in range(1, 7)]
-funko_url = [("https://shop.funko.com/catalog.html?p=" + str(num)) for num in range(32)]
-fye_url = [("https://www.fye.com/toys-collectibles/action-figures/funko/?sz=60&start=" + str(num))  for num in range(0, 2160, 60)]
-toytokyo_url = [("https://www.toytokyo.com/funko-pop/?sort=alphaasc&page=" + str(num)) for num in range(8)]
-fugitive_url = [("https://www.fugitivetoys.com/collections/funko-pop?page=" + str(num) + "&sort_by=title-ascending") for num in range(33)]
-seven_url = [("https://7bucksapop.com/collections/all-7-pops?page=" + str(num) + "&sort_by=title-ascending") for num in range(12)] 
 
 def main():
     root = Tk()
     root.title("FUNKO Pop! Price Search")
-    main = Interface(root)
-    main.build_interface()
+    main = PriceGenerator(root)
     root.mainloop()
  
  
