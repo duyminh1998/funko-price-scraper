@@ -7,12 +7,15 @@ import re
 from bs4 import BeautifulSoup
 from pathlib import Path
 from tabulate import tabulate
-'''This is a WIP development of a GUI for the funko_price_scraper.py script'''
 
 
 class PriceGenerator:
 
     def __init__(self, master):
+        # variables init
+        self.data = pd.DataFrame(columns=['NAME', 'STORE', 'ORIGINAL PRICE', 'SALE PRICE'])
+        self.results = pd.DataFrame(columns=['NAME', 'STORE', 'ORIGINAL PRICE', 'SALE PRICE'])
+
         # URL init
         self.hot_topic_url = [("https://www.hottopic.com/funko/?sz=60&start=" + str(num)) for num in range(0, 500, 60)]
         self.box_lunch_url = [("https://www.boxlunch.com/funko/?sz=60&start=" + str(num)) for num in range(0, 540, 60)]
@@ -64,24 +67,26 @@ class PriceGenerator:
         self.seven_option = Checkbutton(frame, state=ACTIVE, variable=self.sevenVar, text='7 Bucks a Pop').grid(row=1, column=7, sticky="nsew")
 
         self.search_result = StringVar()
-        self.examplelabel = Label(frame, textvariable=self.search_result)
-        self.examplelabel.grid(row=2, columnspan=10)
+        self.search_result_label = Label(frame, textvariable=self.search_result)
+        self.search_result_label.grid(row=2, columnspan=10)
         
     def pop_search(self) -> None:
         now = datetime.datetime.now()
         try:
             pop_name = self.search.get()
-            header = ['NAME', 'STORE', 'ORIGINAL PRICE', 'SALE PRICE']
-            df = pd.read_csv("pop_prices_csv_" + str(now.month) + "_" + str(now.day) + ".csv", error_bad_lines=False)
-            self.results = pd.DataFrame(columns=header)
-            j = 0
-            search = set(pop_name.lower().split(' '))
-            for i in range(len(df)):
-                    if len(search & set(df.loc[i, "NAME"].lower().split(' '))) >= len(search):
-                            self.results.loc[j] = df.loc[i]
-                            j += 1
-            end = str(tabulate(self.results.fillna(value=0), headers=header, showindex=False, tablefmt='pipe'))
-            self.search_result.set(end)
+            if pop_name != "":
+                header = ['NAME', 'STORE', 'ORIGINAL PRICE', 'SALE PRICE']
+                df = pd.read_csv("pop_prices_csv_" + str(now.month) + "_" + str(now.day) + ".csv", error_bad_lines=False)
+                j = 0
+                search = set(pop_name.lower().split(' '))
+                for i in range(len(df)):
+                        if len(search & set(df.loc[i, "NAME"].lower().split(' '))) >= len(search):
+                                self.results.loc[j] = df.loc[i]
+                                j += 1
+                end = str(tabulate(self.results.fillna(value=0), headers=header, showindex=False, tablefmt='pipe'))
+                self.search_result.set(end)
+            else:
+                self.status.set("Please enter a valid product name")
         except:
             self.status.set("No recent data found. Please generate new price data")
 
@@ -91,10 +96,9 @@ class PriceGenerator:
         t1.start()
 
     def generate(self) -> 'DataFrame':
-        self.data = pd.DataFrame(columns=['NAME', 'STORE', 'ORIGINAL PRICE', 'SALE PRICE'])
         now = datetime.datetime.now()
         i = 0
-        error = ''
+        error = []
         found = []
         if self.htVar.get() == 1 or self.bxVar.get() == 1 or self.allVar.get() == 1:
             try:
@@ -124,7 +128,7 @@ class PriceGenerator:
                         k += 1
                 found.append("Hot Topic/ Box Lunch")
             except:
-                error = "Can't connect to Hot Topic/Box Lunch"
+                error.append("Hot Topic/ Box Lunch")
         if self.cntVar.get() == 1 or self.allVar.get() == 1:
             try:
                 for url in self.chronotoys_url:
@@ -139,7 +143,7 @@ class PriceGenerator:
                         i += 1
                 found.append("CHRONOTOYS")
             except:
-                error = "Can't connect to CHRONOTOYS"
+                error.append("CHRONOTOYS")
         if self.fVar.get() == 1 or self.allVar.get() == 1:
             try:
                 for url in self.funko_url:
@@ -152,7 +156,7 @@ class PriceGenerator:
                         i += 1
                 found.append("Funko")
             except:
-                error = "Can't connect to Funko"
+                error.append("Funko")
         if self.fyeVar.get() == 1 or self.allVar.get() == 1:
             try:
                 for url in self.fye_url:
@@ -167,7 +171,7 @@ class PriceGenerator:
                         i += 1
                 found.append("FYE")
             except:
-                error = "Can't connect to FYE"
+                error.append("FYE")
         if self.ttVar.get() == 1 or self.allVar.get() == 1:
             try:
                 for url in self.toytokyo_url:
@@ -180,7 +184,7 @@ class PriceGenerator:
                                 i += 1
                 found.append("ToyTokyo")
             except:
-                error = "Can't connect to ToyTokyo"
+                error.append("ToyTokyo")
         if self.fgtVar.get() == 1 or self.allVar.get() == 1:
             try:
                 for url in self.fugitive_url:
@@ -197,7 +201,7 @@ class PriceGenerator:
                         i += 1
                 found.append("Fugitive Toys")
             except:
-                error = "Can't connect to Fugitive Toys"
+                error.append("Fugitive Toys")
         if self.sevenVar.get() == 1 or self.allVar.get() == 1:
             try:
                 for url in self.seven_url:
@@ -212,16 +216,17 @@ class PriceGenerator:
                         i += 1
                 found.append("7 Bucks a Pop")
             except:
-                error = "Can't connect to 7 Bucks a Pop"
+                error.append("7 Bucks a Pop")
         self.status.set("Done! Found data for " + str(found))
         if error != '':
-            self.status.set(error + " | Found data for " + str(found))
+            self.status.set("Can't connect to " + str(error) + " | Found data for " + str(found))
         return self.data.drop_duplicates().to_csv("pop_prices_csv_" + str(now.month) + "_" + str(now.day) + ".csv")
 
 
 def main():
     root = Tk()
     root.title("FUNKO Pop! Price Search")
+    root.iconbitmap(r'py.ico')
     main = PriceGenerator(root)
     root.mainloop()
  
