@@ -44,6 +44,7 @@ class PriceGenerator:
         self.search_label.grid(row=0, columnspan = 2, sticky=W)
 
         self.search = Entry(frame)
+        self.search.bind('<Return>', self.pop_search)
         self.search.grid(row=0, column=2)
 
         self.search_enter = Button(frame, text="Search!", command=self.pop_search)
@@ -69,7 +70,7 @@ class PriceGenerator:
         self.search_result_label = Label(frame, textvariable=self.search_result)
         self.search_result_label.grid(row=2, columnspan=10)
         
-    def pop_search(self) -> None:
+    def pop_search(self, event=None) -> None:
         now = datetime.datetime.now()
         self.results = pd.DataFrame(columns=['NAME', 'STORE', 'ORIGINAL PRICE', 'SALE PRICE'])
         try:
