@@ -14,7 +14,6 @@ class PriceGenerator:
     def __init__(self, master):
         # variables init
         self.data = pd.DataFrame(columns=['NAME', 'STORE', 'ORIGINAL PRICE', 'SALE PRICE'])
-        self.results = pd.DataFrame(columns=['NAME', 'STORE', 'ORIGINAL PRICE', 'SALE PRICE'])
 
         # URL init
         self.hot_topic_url = [("https://www.hottopic.com/funko/?sz=60&start=" + str(num)) for num in range(0, 500, 60)]
@@ -72,6 +71,7 @@ class PriceGenerator:
         
     def pop_search(self) -> None:
         now = datetime.datetime.now()
+        self.results = pd.DataFrame(columns=['NAME', 'STORE', 'ORIGINAL PRICE', 'SALE PRICE'])
         try:
             pop_name = self.search.get()
             if pop_name != "":
