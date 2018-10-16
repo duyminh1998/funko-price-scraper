@@ -86,6 +86,7 @@ class PriceGenerator:
                                 j += 1
                 end = str(tabulate(self.results.fillna(value=0), headers=header, showindex=False, tablefmt='pipe'))
                 self.search_result.set(end)
+                # print(end)
             else:
                 self.status.set("Please enter a valid product name")
         except:
