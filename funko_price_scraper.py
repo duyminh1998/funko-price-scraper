@@ -15,6 +15,18 @@ class PriceGenerator:
         # variables init
         self.data = pd.DataFrame(columns=['NAME', 'STORE', 'ORIGINAL PRICE', 'SALE PRICE'])
 
+        self.htVar = IntVar()
+        self.bxVar = IntVar()
+        self.cntVar = IntVar()
+        self.fVar = IntVar()
+        self.fyeVar = IntVar()
+        self.ttVar = IntVar()
+        self.fgtVar = IntVar()
+        self.sevenVar = IntVar()
+        self.allVar = IntVar()
+
+        self.frame_existence = 1
+
         # URL init
         self.hot_topic_url = [("https://www.hottopic.com/funko/?sz=60&start=" + str(num)) for num in range(0, 500, 60)]
         self.box_lunch_url = [("https://www.boxlunch.com/funko/?sz=60&start=" + str(num)) for num in range(0, 540, 60)]
@@ -29,16 +41,6 @@ class PriceGenerator:
         # GUI init
         frame = Frame(master)
         frame.grid(row=0, column=0)
-
-        self.htVar = IntVar()
-        self.bxVar = IntVar()
-        self.cntVar = IntVar()
-        self.fVar = IntVar()
-        self.fyeVar = IntVar()
-        self.ttVar = IntVar()
-        self.fgtVar = IntVar()
-        self.sevenVar = IntVar()
-        self.allVar = IntVar()
         
         self.search_label = Label(frame, text="Please enter product to search:")
         self.search_label.grid(row=0, columnspan = 2, sticky=W)
@@ -66,13 +68,12 @@ class PriceGenerator:
         self.fgt_option = Checkbutton(frame, state=ACTIVE, variable=self.fgtVar, text='Fugitive Toys').grid(row=1, column=0, sticky="nsew")
         self.seven_option = Checkbutton(frame, state=ACTIVE, variable=self.sevenVar, text='7 Bucks a Pop').grid(row=1, column=7, sticky="nsew")
 
-        self.search_result = StringVar()
-        self.search_result_label = Label(frame, textvariable=self.search_result)
-        self.search_result_label.grid(row=2, columnspan=10)
-        
-    def pop_search(self, event=None) -> None:
+    # this function takes the user query in the search bar and returns matches in the database/csv    
+    def pop_search(self, event=None) -> str:
         now = datetime.datetime.now()
         self.results = pd.DataFrame(columns=['NAME', 'STORE', 'ORIGINAL PRICE', 'SALE PRICE'])
+        if self.frame_existence != 1:
+            self.results_frame.grid_forget()
         try:
             pop_name = self.search.get()
             if pop_name != "":
@@ -84,19 +85,39 @@ class PriceGenerator:
                         if len(search & set(df.loc[i, "NAME"].lower().split(' '))) >= len(search):
                                 self.results.loc[j] = df.loc[i]
                                 j += 1
-                end = str(tabulate(self.results.fillna(value=0), headers=header, showindex=False, tablefmt='pipe'))
-                self.search_result.set(end)
-                # print(end)
+                self.results = self.results.fillna(value="None")
+                self.results_frame = Frame()
+                self.results_frame.grid(row=3, column=0)
+                self.head_name = Label(self.results_frame, text="NAME")
+                self.head_name.grid(row=3, column = 1)
+                self.head_store = Label(self.results_frame, text="STORE")
+                self.head_store.grid(row=3, column = 2)
+                self.head_ogp = Label(self.results_frame, text="ORIGINAL PRICE")
+                self.head_ogp.grid(row=3, column = 3)
+                self.head_sp = Label(self.results_frame, text="SALE PRICE")
+                self.head_sp.grid(row=3, column = 4)
+                for i in range(len(self.results)):
+                    self.results_name = Label(self.results_frame, text=self.results.loc[i, "NAME"])
+                    self.results_name.grid(row=i+4, column = 1)
+                    self.results_store = Label(self.results_frame, text=self.results.loc[i, "STORE"])
+                    self.results_store.grid(row=i+4, column = 2)
+                    self.results_ogp = Label(self.results_frame, text=self.results.loc[i, "ORIGINAL PRICE"])
+                    self.results_ogp.grid(row=i+4, column = 3)
+                    self.results_sp = Label(self.results_frame, text=self.results.loc[i, "SALE PRICE"])
+                    self.results_sp.grid(row=i+4, column = 4)
+                self.frame_existence = 2
             else:
                 self.status.set("Please enter a valid product name")
         except:
             self.status.set("No recent data found. Please generate new price data")
-
+    
+    # threads the process of generating the data so the program doesn't freeze up while searching
     def run(self) -> None:
         self.status.set("Getting data...")
         t1 = threading.Thread(target=self.generate)
         t1.start()
-
+        return None
+    # scrapes retailers for pricing depending on which stores the users chose
     def generate(self) -> 'DataFrame':
         now = datetime.datetime.now()
         i = 0
