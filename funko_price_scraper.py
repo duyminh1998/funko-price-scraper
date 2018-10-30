@@ -81,7 +81,7 @@ class PriceGenerator:
                 j = 0
                 search = set(pop_name.lower().split(' '))
                 for i in range(len(df)):
-                        if len(search & set(df.loc[i, "NAME"].lower().split(' '))) >= len(search):
+                        if len(search & set(str(df.loc[i, "NAME"]).lower().split(' '))) >= len(search):
                                 self.results.loc[j] = df.loc[i]
                                 j += 1
                 self.results = self.results.fillna(value="None")
