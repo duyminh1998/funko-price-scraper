@@ -37,3 +37,5 @@ add support for accessing pricing from older dates
 add support for analysis of price trends in the form of graphs and charts
 
 improve GUI (format results table)
+
+use Flask to create a website for the script, facilitating user experience as well as speeds up the process
