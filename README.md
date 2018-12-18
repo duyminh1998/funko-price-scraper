@@ -1,7 +1,7 @@
 ![Funko Pop!](http://diskingdom.com/wp-content/uploads/2015/01/pop-vinyls-vault-banner-1024x401.jpg)
 
 # funko-price-scraper
-This Python script utilizes BeautifulSoup, Requests, and Pandas to search daily for FUNKO Pop! Products pricing discrepancies across multiple online retailers. The script currently supports Hot Topic, Box Lunch, CHRONOTOYS, Funko, FYE, ToyTokyo Fugitive Toys and 7 Bucks a Pop.
+This Python script utilizes BeautifulSoup, Requests, and Pandas to search daily for FUNKO Pop! Products pricing discrepancies across multiple online retailers. The script currently supports Hot Topic, Box Lunch, CHRONOTOYS, Funko, FYE, ToyTokyo Fugitive Toys and 7 Bucks a Pop. This repo current supports two versions of the script: one that stores results in .csv and one that stores results in a local SQL server. 
 
 NOTE: Updating for the most recent prices usually take 4~5 minute because the script has to scrape multiple retailers.
 
