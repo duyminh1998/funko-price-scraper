@@ -28,14 +28,14 @@ class PriceGenerator:
 
         # URL init
         self.hot_topic_url = [("https://www.hottopic.com/funko/?sz=60&start=" + str(num)) for num in range(0, 500, 60)]
-        self.box_lunch_url = [("https://www.boxlunch.com/funko/?sz=60&start=" + str(num)) for num in range(0, 540, 60)]
+        self.box_lunch_url = [("https://www.boxlunch.com/funko/?sz=60&start=" + str(num)) for num in range(0, 600, 60)]
         self.ht_bl_urls = [self.hot_topic_url, self.box_lunch_url]
         self.chronotoys_url = [("https://www.chronotoys.com/collections/pop-exclusives?page=" + str(num) + "&sort_by=title-ascending") for num in range(1, 7)]
-        self.funko_url = [("https://shop.funko.com/catalog.html?p=" + str(num)) for num in range(32)]
-        self.fye_url = [("https://www.fye.com/toys-collectibles/action-figures/funko/?sz=60&start=" + str(num))  for num in range(0, 2160, 60)]
-        self.toytokyo_url = [("https://www.toytokyo.com/funko-pop/?sort=alphaasc&page=" + str(num)) for num in range(8)]
-        self.fugitive_url = [("https://www.fugitivetoys.com/collections/funko-pop?page=" + str(num) + "&sort_by=title-ascending") for num in range(33)]
-        self.seven_url = [("https://7bucksapop.com/collections/all-7-pops?page=" + str(num) + "&sort_by=title-ascending") for num in range(12)] 
+        self.funko_url = [("https://shop.funko.com/catalog.html?p=" + str(num)) for num in range(35)]
+        self.fye_url = [("https://www.fye.com/toys-collectibles/action-figures/funko/?sz=60&start=" + str(num))  for num in range(0, 2760, 60)]
+        self.toytokyo_url = [("https://www.toytokyo.com/funko/?sort=alphaasc&page=" + str(num)) for num in range(9)]
+        self.fugitive_url = [("https://www.fugitivetoys.com/collections/funko-pop?page=" + str(num) + "&sort_by=title-ascending") for num in range(35)]
+        self.seven_url = [("https://7bucksapop.com/collections/all-7-pops?page=" + str(num) + "&sort_by=title-ascending") for num in range(20)] 
         
         # GUI init
         frame = Frame(master)
