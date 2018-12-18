@@ -5,6 +5,9 @@ This Python script utilizes BeautifulSoup, Requests, and Pandas to search daily 
 
 NOTE: Updating for the most recent prices usually take 4~5 minute because the script has to scrape multiple retailers.
 
+# updates
+Webapp for FUNKO Pop! Price Searcher in progress.
+
 # prerequisites
 1. Python 3.7
 2. pip
@@ -36,6 +39,6 @@ add support for accessing pricing from older dates
 
 add support for analysis of price trends in the form of graphs and charts
 
-improve GUI (format results table)
+~improve GUI (format results table)~
 
-use Flask to create a website for the script, facilitating user experience as well as speeds up the process
+~use Flask to create a website for the script, facilitating user experience as well as speeds up the process~
