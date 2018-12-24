@@ -248,7 +248,6 @@ class PriceGenerator:
 def main():
     root = Tk()
     root.title("FUNKO Pop! Price Search")
-    root.iconbitmap(r'py.ico')
     main = PriceGenerator(root)
     root.mainloop()
  
